@@ -1,16 +1,13 @@
 <?php
+include '../src/Whois.php';
 
-include '../src/Phois/Whois/Whois.php';
+$domain = 'reg.ru';
+$whois = new \Azurre\Component\Dns\Whois();
 
-$sld = 'reg.ru';
+//$info = $whois->getInfo($domain);
+//print_r($info);
 
-$domain = new Phois\Whois\Whois($sld);
-
-$whois_answer = $domain->info();
-
-echo $whois_answer;
-
-if ($domain->isAvailable()) {
+if ($whois->isAvailable($domain)) {
     echo "Domain is available\n";
 } else {
     echo "Domain is registered\n";
