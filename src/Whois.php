@@ -9,6 +9,8 @@ class Whois
 {
     const WHOIS_PORT = 43;
 
+    const BASE_PARSER = 'base';
+
     /**
      * Max request time in seconds
      *
@@ -29,6 +31,14 @@ class Whois
     protected $servers;
 
     /**
+     * @var array
+     */
+    protected $parser = [
+        self::BASE_PARSER => \Azurre\Component\Dns\Parser\Base::class,
+        'ru'              => \Azurre\Component\Dns\Parser\Ru::class
+    ];
+
+    /**
      * @param array $servers
      */
     public function __construct(array $servers = null)
@@ -41,7 +51,7 @@ class Whois
      * @return string
      * @throws \Exception
      */
-    public function getInfo($domain)
+    public function find($domain)
     {
         $domain = mb_strtolower(trim($domain));
         list($subDomain, $tld) = $this->parseDomain($domain);
@@ -55,12 +65,33 @@ class Whois
     /**
      * @param string $domain
      * @return array
+     * @throws \Exception
+     */
+    public function getInfo($domain)
+    {
+        $response = $this->find($domain);
+        $domain = mb_strtolower(trim($domain));
+        list(, $tld) = $this->parseDomain($domain);
+        $whoisServerData = $this->getServer($tld, false);
+        if (isset($whoisServerData[2])) {
+            $parserClass = $this->parser[$whoisServerData[2]];
+        } else {
+            $parserClass = $this->parser[static::BASE_PARSER];
+        }
+        /** @var \Azurre\Component\Dns\ParserInterface $parser */
+        $parser = new $parserClass;
+
+        return $parser->process($response);
+    }
+
+    /**
+     * @param string $domain
+     * @return array
      */
     protected function parseDomain($domain)
     {
         return explode('.', $domain, 2);
     }
-
 
     /**
      * @param string $whoisServer

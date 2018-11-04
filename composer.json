@@ -17,14 +17,14 @@
         }
     ],
     "require": {
-        "php": ">=5.4",
+        "php": ">=5.6",
         "ext-curl": "*",
         "ext-json": "*",
         "ext-mbstring": "*"
     },
     "autoload": {
-        "psr-0": {
-            "Azurre\\Component\\Dns\\Whois": "src"
+        "psr-4": {
+            "Azurre\\Component\\Dns\\": "src/"
         }
     }
 }
