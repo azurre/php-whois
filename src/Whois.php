@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author Alex Milenin
+ * @email  admin@azrr.info
+ * @date   04.11.2018
+ */
 
 namespace Azurre\Component\Dns;
 
@@ -7,8 +12,14 @@ namespace Azurre\Component\Dns;
  */
 class Whois
 {
+    /**
+     * Whois port
+     */
     const WHOIS_PORT = 43;
 
+    /**
+     * Base parser code
+     */
     const BASE_PARSER = 'base';
 
     /**
@@ -19,6 +30,8 @@ class Whois
     protected $timeout = 10;
 
     /**
+     * Path to whois servers list
+     *
      * @var string
      */
     protected $serversListPath = 'whois.servers.json';
@@ -31,6 +44,8 @@ class Whois
     protected $servers;
 
     /**
+     * Parsers map
+     *
      * @var array
      */
     protected $parser = [
@@ -47,6 +62,8 @@ class Whois
     }
 
     /**
+     * Retrieve domain info
+     *
      * @param string $domain
      * @return string
      * @throws \Exception
@@ -63,6 +80,8 @@ class Whois
     }
 
     /**
+     * Retrieve parsed domain onfo
+     *
      * @param string $domain
      * @return array
      * @throws \Exception
@@ -198,17 +217,9 @@ class Whois
 
         $array = explode(':', $notFoundPatten);
         if (reset($array) === 'MAXCHARS') {
-            if (strlen($whois_string2) <= $array[1]) {
-                return true;
-            } else {
-                return false;
-            }
+            return (bool)strlen($whois_string2) <= $array[1];
         } else {
-            if (preg_match('/' . $notFoundPatten . '/i', $whois_string)) {
-                return true;
-            } else {
-                return false;
-            }
+            return (bool)preg_match('/' . $notFoundPatten . '/i', $whois_string);
         }
     }
 
@@ -247,26 +258,22 @@ class Whois
     /**
      * @param int $timeout
      */
-    public function setTimeout(
-        $timeout
-    ) {
+    public function setTimeout($timeout)
+    {
         $this->timeout = $timeout;
     }
 
     /**
-     * @param string $key
+     * @param string $tld
      * @return array
      */
-    public function getServers($key = null)
+    public function getServers($tld = null)
     {
         if ($this->servers === null) {
-            $path = strpos($this->serversListPath, '/') === 0
-                ? $this->serversListPath
-                : __DIR__ . '/' . $this->serversListPath;
-            $this->servers = json_decode(trim(file_get_contents($path)), true) ?: [];
+            $this->servers = $this->loadServer();
         }
-        if ($key) {
-            return isset($this->servers[$key]) ? $this->servers[$key] : null;
+        if ($tld) {
+            return isset($this->servers[$tld]) ? $this->servers[$tld] : null;
         }
 
         return $this->servers;
@@ -274,7 +281,7 @@ class Whois
 
     /**
      * @param string $tld
-     * @param bool   $getHost
+     * @param bool $getHost
      * @return array|string
      * @throws \Exception
      */
@@ -290,6 +297,18 @@ class Whois
         }
 
         return $this->getServers($tld);
+    }
+
+    /**
+     * @return array
+     */
+    protected function loadServer()
+    {
+        $path = strpos($this->serversListPath, '/') === 0
+            ? $this->serversListPath
+            : __DIR__ . '/' . $this->serversListPath;
+
+        return json_decode(trim(file_get_contents($path)), true) ?: [];
     }
 
     /**
@@ -329,6 +348,25 @@ class Whois
     public function addServers(array $servers)
     {
         $this->servers = array_merge($this->servers, $servers);
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParser()
+    {
+        return $this->parser;
+    }
+
+    /**
+     * @param array $parser
+     * @return Whois
+     */
+    public function setParser($parser)
+    {
+        $this->parser = $parser;
 
         return $this;
     }
