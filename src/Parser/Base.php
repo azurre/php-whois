@@ -48,6 +48,8 @@ class Base implements \Azurre\Component\Dns\ParserInterface
     }
 
     /**
+     * Parse response
+     *
      * @param string $response
      * @return array
      */
