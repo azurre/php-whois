@@ -35,7 +35,8 @@ class Whois
      */
     protected $parser = [
         self::BASE_PARSER => \Azurre\Component\Dns\Parser\Base::class,
-        'ru'              => \Azurre\Component\Dns\Parser\Ru::class
+        'ru'              => \Azurre\Component\Dns\Parser\Ru::class,
+        'ua'              => \Azurre\Component\Dns\Parser\Ua::class,
     ];
 
     /**
@@ -53,13 +54,15 @@ class Whois
      */
     public function find($domain)
     {
+        $punycode = new \TrueBV\Punycode();
         $domain = mb_strtolower(trim($domain));
+        $domain = $punycode->encode($domain);
         list($subDomain, $tld) = $this->parseDomain($domain);
         if (!$this->isValid($domain)) {
             throw new \Exception('Domain name is not valid');
         }
 
-        return $this->request($this->getServer($tld), $tld, $subDomain);
+        return $this->request($this->getServer($punycode->decode($tld)),$tld, $subDomain);
     }
 
     /**
@@ -183,7 +186,9 @@ class Whois
      */
     public function isAvailable($domain)
     {
+        $punycode = new \TrueBV\Punycode();
         $domain = mb_strtolower(trim($domain));
+        $domain = $punycode->encode($domain);
         if (!$this->isValid($domain)) {
             throw new \InvalidArgumentException('Domain name is not valid');
         }

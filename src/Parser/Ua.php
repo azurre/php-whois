@@ -10,7 +10,7 @@ namespace Azurre\Component\Dns\Parser;
 /**
  * Class Base
  */
-class Ru extends \Azurre\Component\Dns\Parser\Base
+class Ua extends \Azurre\Component\Dns\Parser\Base
 {
     /**
      * @param string $response
@@ -26,14 +26,14 @@ class Ru extends \Azurre\Component\Dns\Parser\Base
         return [
             'registrant'   => [
                 'organization' => $this->get('org'),
-                'state'        => '',
-                'country'      => ''
+                'state'        => $this->get('Registrant State/Province'),
+                'country'      => $this->get('Registrant Country')
             ],
             'registration' => [
-                'status'    => $this->get('state'),
+                'status'    => $this->get('status'),
                 'created'   => $this->get('created'),
-                'updated'   => '',
-                'expires'   => $this->get('paid-till'),
+                'updated'   => $this->get('modified'),
+                'expires'   => $this->get('expires'),
                 'registrar' => $this->get('registrar')
             ],
             'name_servers' => $this->get('nserver'),

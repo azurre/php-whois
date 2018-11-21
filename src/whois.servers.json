@@ -2948,6 +2948,11 @@
         "No entries found",
         "ru"
     ],
+    "рф": [
+        "whois.ripn.net",
+        "No entries found",
+        "ru"
+    ],
     "ruhr": [
         "whois.nic.ruhr",
         "% no matching objects found"
@@ -3402,7 +3407,8 @@
     ],
     "ua": [
         "whois.net.ua",
-        "No entries found"
+        "No entries found",
+        "ua"
     ],
     "ug": [
         "whois.co.ug",
