@@ -367,7 +367,7 @@ class Whois
 
     /**
      * @param array $parser
-     * @return Whois
+     * @return $this
      */
     public function setParser($parser)
     {
